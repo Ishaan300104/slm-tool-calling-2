@@ -3,7 +3,7 @@ import os
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model
-from src.data_loader import load_tool_calling_dataset
+from .data_loader import load_tool_calling_dataset # Fixed relative import
 import json
 from trl import SFTConfig, SFTTrainer
 
@@ -47,7 +47,8 @@ def preprocess_data(examples, tokenizer):
         )
         processed_examples["text"].append(prompt)
 
-    return tokenizer(processed_examples["text"], truncation=True, padding="max_length", max_length=1024)
+    # Let SFTTrainer handle padding, just truncate
+    return tokenizer(processed_examples["text"], truncation=True, max_length=1024)
 
 def main():
     # Set CUDA device
@@ -69,6 +70,9 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
+
+    # --- THIS IS THE KEY FIX for the CUDA error ---
+    tokenizer.padding_side = 'left'
 
     # Preprocess and tokenize the dataset
     tokenized_dataset = dataset.map(lambda examples: preprocess_data(examples, tokenizer), batched=True)
@@ -116,7 +120,9 @@ def main():
         remove_unused_columns=False,
         dataset_text_field="text",
         max_length=1024,
+        packing=False,        # Added this
         bf16=True,
+        report_to="none",     # Added this to disable wandb
     )
 
     # Initialize Trainer
@@ -124,6 +130,7 @@ def main():
         model=model,
         args=training_args,
         train_dataset=tokenized_dataset,
+        tokenizer=tokenizer, # Added tokenizer
     )
 
     # Start training
