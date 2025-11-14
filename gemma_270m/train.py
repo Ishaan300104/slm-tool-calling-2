@@ -121,7 +121,7 @@ def main():
         dataset_text_field="text",
         max_length=1024,
         packing=False,        # Added this
-        bf16=True,
+        fp16=True,
         report_to="none",     # Added this to disable wandb
     )
 
