@@ -129,8 +129,7 @@ def main():
     trainer = SFTTrainer(
         model=model,
         args=training_args,
-        train_dataset=tokenized_dataset,
-        tokenizer=tokenizer, # Added tokenizer
+        train_dataset=tokenized_dataset
     )
 
     # Start training
