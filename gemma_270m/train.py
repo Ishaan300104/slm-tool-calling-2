@@ -3,7 +3,7 @@ import os
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model
-from src.data_loader import load_tool_calling_dataset
+from gemma_270m.data_loader import load_tool_calling_dataset
 import json
 from trl import SFTConfig, SFTTrainer
 
