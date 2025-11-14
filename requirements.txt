@@ -6,3 +6,4 @@ accelerate
 bitsandbytes
 scikit-learn
 tqdm
+trl # Tejaaa yeh bhi daalna tha lol 

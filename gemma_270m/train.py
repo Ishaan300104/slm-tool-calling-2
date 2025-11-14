@@ -3,7 +3,7 @@ import os
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model
-from gemma_270m.data_loader import load_tool_calling_dataset
+from src.data_loader import load_tool_calling_dataset
 import json
 from trl import SFTConfig, SFTTrainer
 
@@ -115,7 +115,7 @@ def main():
         weight_decay=0.01,
         remove_unused_columns=False,
         dataset_text_field="text",
-        max_seq_length=1024,
+        max_length=1024,
         bf16=True,
     )
 
